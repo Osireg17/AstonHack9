@@ -1,6 +1,7 @@
+"use client";
 import React from "react";
 import { Course, Unit, Chapter } from "@prisma/client";
-import ChapterCard from "@/components/ChapterCard";
+import ChapterCard, {ChapterCardHandler} from "@/components/ChapterCard";
 import {Separator} from "@/components/ui/separator";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -18,7 +19,6 @@ const ConfirmChapters = ({course}: Props) => {
     const chapterRefs: Record<string, React.RefObject<ChapterCardHandler>> = {};
     course.units.forEach((unit) => {
         unit.chapters.forEach((chapter) => {
-            // eslint-disable-next-line react-hooks/rules-of-hooks
             chapterRefs[chapter.id] = React.useRef(null);
         });
     });
