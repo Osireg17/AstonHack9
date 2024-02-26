@@ -4,7 +4,6 @@ import {ZodError} from "zod";
 import {strict_output} from "@/lib/gpt";
 import {getUnsplashImage} from "@/lib/unsplash";
 import {prisma} from "@/lib/database";
-import {getAuthSession} from "@/lib/auth";
 
 export async function POST(req: Request, res: Response) {
 

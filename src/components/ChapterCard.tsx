@@ -5,7 +5,6 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import React from "react";
 import { useToast } from "./ui/use-toast";
-import { Loader2 } from "lucide-react";
 
 type Props = {
     chapter: Chapter;
@@ -80,7 +79,6 @@ const ChapterCard = React.forwardRef<ChapterCardHandler, Props>(
                 })}
             >
                 <h5>{chapter.name}</h5>
-                {isLoading && <Loader2 className="animate-spin" />}
             </div>
         );
     }

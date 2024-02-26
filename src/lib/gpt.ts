@@ -25,7 +25,7 @@ export async function strict_output(
     // if the output format contains dynamic elements of < or >, then add to the prompt to handle dynamic elements
     const dynamic_elements: boolean = /<.*?>/.test(JSON.stringify(output_format));
     // if the output format contains list elements of [ or ], then we add to the prompt to handle lists
-    const list_output: boolean = /\[.*?\]/.test(JSON.stringify(output_format));
+    const list_output: boolean = /\[.*?]/.test(JSON.stringify(output_format));
 
     // start off with no error message
     let error_msg: string = "";
@@ -35,7 +35,7 @@ export async function strict_output(
             list_output && "an array of objects in"
         } the following in json format: ${JSON.stringify(
             output_format
-        )}. \nDo not put quotation marks or escape character \\ in the output fields.`;
+        )}. \nPut quotation marks or escape character \\ in the output fields.`;
 
         if (list_output) {
             output_format_prompt += `\nIf output field is a list, classify output into the best element of the list.`;
@@ -111,7 +111,7 @@ export async function strict_output(
                         if (Array.isArray(output[index][key])) {
                             output[index][key] = output[index][key][0];
                         }
-                        // output the default category (if any) if GPT is unable to identify the category
+                        // output the default category (if any) is GPT is unable to identify the category
                         if (!choices.includes(output[index][key]) && default_category) {
                             output[index][key] = default_category;
                         }

@@ -32,7 +32,7 @@ export async function POST(req: Request, res: Response) {
         }
         const videoId = await searchYoutube(chapter.youtubeSearchQuery);
         let transcript = await getTranscript(videoId);
-        const maxLength = 500;
+        const maxLength = 300;
         transcript = transcript.split(" ").slice(0, maxLength).join(" ");
 
         const {summary}: { summary: string } = await strict_output(
@@ -41,6 +41,10 @@ export async function POST(req: Request, res: Response) {
             transcript,
             {summary: "summary of the transcript"}
         );
+
+        // any way to rate limit this?
+
+
 
         const questions = await getQuestionsFromTranscript(
             transcript,
