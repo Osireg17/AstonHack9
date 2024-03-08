@@ -51,12 +51,12 @@ const CreateCourseForm = (
             return;
         }
         createChapters(data, {
-            onSuccess: ({ course_id }) => {
+            onSuccess: ({ courseId }) => {
                 toast({
                     title: "Success",
                     description: "Course created successfully",
                 });
-                router.push(`/create/${course_id}`);
+                router.push(`/create/${courseId}`);
             },
             onError: (error) => {
                 console.error(error);

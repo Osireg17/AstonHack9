@@ -68,20 +68,33 @@ const ConfirmChapters = ({course}: Props) => {
                         <ChevronLeft className="w-4 h-4 mr-2" strokeWidth={4} />
                         Back
                     </Link>
-                    <Button
-                        type="button"
-                        className="ml-4 font-semibold"
-                        disabled={loading}
-                        onClick={() => {
-                            setLoading(true);
-                            Object.values(chapterRefs).forEach((ref) => {
-                                ref.current?.triggerLoad();
-                            });
-                        }}
-                    >
-                        Generate
-                        <ChevronRight className="w-4 h-4 ml-2" strokeWidth={4} />
-                    </Button>
+                    {
+                        totalChaptersCount === completedChapters.size ? (
+                            <Link
+                            className={buttonVariants({className: "ml-4 font-semibold"})}
+                            href={'/course/${course.id}/0/0'}
+                            >
+                                Save and Continue
+                                <ChevronRight className={"w-4 h-4 ml-2"}/>
+                            </Link>
+
+                        ) : (
+                            <Button
+                                type="button"
+                                className="ml-4 font-semibold"
+                                disabled={loading}
+                                onClick={() => {
+                                    setLoading(true);
+                                    Object.values(chapterRefs).forEach((ref) => {
+                                        ref.current?.triggerLoad();
+                                    });
+                                }}
+                            >
+                                Generate
+                                <ChevronRight className="w-4 h-4 ml-2" strokeWidth={4} />
+                            </Button>
+                        )
+                    }
                 </div>
                 <Separator className={"flex-[1]"}/>
             </div>

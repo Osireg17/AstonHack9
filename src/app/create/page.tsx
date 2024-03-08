@@ -7,7 +7,6 @@ import CreateCourseForm from '@/components/CreateCourseForm';
 type Props = {}
 
 const CreatePage = async (props: Props) => {
-    // if the user is not signed in, redirect to the sign in page
     const session = await getAuthSession()
     if (!session?.user) {
         return redirect("/gallery");

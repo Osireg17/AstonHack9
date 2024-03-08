@@ -69,8 +69,13 @@ export async function POST(req: Request, res: Response) {
             });
         }
 
-        console.log(output_units, imageSearchTerm);
-        return new NextResponse(JSON.stringify({output_units}), {status: 200});
+        return new NextResponse(
+            JSON.stringify({
+                success: true,
+                courseId: course.id,
+            }),
+            {status: 200}
+        );
     } catch (e) {
         if (e instanceof ZodError) {
             return new NextResponse(JSON.stringify({errors: e.errors}), {status: 400});
