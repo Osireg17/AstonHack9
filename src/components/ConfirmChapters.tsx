@@ -72,7 +72,7 @@ const ConfirmChapters = ({course}: Props) => {
                         totalChaptersCount === completedChapters.size ? (
                             <Link
                             className={buttonVariants({className: "ml-4 font-semibold"})}
-                            href={'/course/${course.id}/0/0'}
+                            href={`/course/${course.id}/0/0`}
                             >
                                 Save and Continue
                                 <ChevronRight className={"w-4 h-4 ml-2"}/>
