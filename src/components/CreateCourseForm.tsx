@@ -14,21 +14,21 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useToast } from "./ui/use-toast";
 import { useRouter } from "next/navigation";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 type Props = {};
 
 type Input = z.infer<typeof createChaptersSchema>;
 
-const CreateCourseForm = (
-    props: Props
-) => {
+const CreateCourseForm = (props: Props) => {
     const router = useRouter();
     const { toast } = useToast();
     const { mutate: createChapters, isLoading } = useMutation({
-        mutationFn: async ({ title, units }: Input) => {
+        mutationFn: async ({ title, units, educationLevel }: Input) => {
             const response = await axios.post("/api/course/createChapters", {
                 title,
                 units,
+                educationLevel,
             });
             return response.data;
         },
@@ -38,6 +38,7 @@ const CreateCourseForm = (
         defaultValues: {
             title: "",
             units: ["", "", ""],
+            educationLevel: "gcse", // Set a default value if needed
         },
     });
 
@@ -91,6 +92,30 @@ const CreateCourseForm = (
                                 </FormItem>
                             );
                         }}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="educationLevel"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col items-start w-full sm:items-center sm:flex-row">
+                                <FormLabel className="flex-[1] text-xl mr-2">
+                                    Education
+                                </FormLabel>
+                                <FormControl className="flex-[6]">
+                                    <Select onValueChange={field.onChange} value={field.value}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select an education level" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="gcse">GCSEs</SelectItem>
+                                            <SelectItem value="alevel">A Levels</SelectItem>
+                                            <SelectItem value="undergraduate">Undergraduate</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
+                            </FormItem>
+                        )}
                     />
 
                     <AnimatePresence>

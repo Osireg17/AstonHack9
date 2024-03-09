@@ -35,16 +35,13 @@ export async function POST(req: Request, res: Response) {
         const maxLength = 300;
         transcript = transcript.split(" ").slice(0, maxLength).join(" ");
 
-        const {summary}: { summary: string } = await strict_output(
-            "You are an AI capable of summarising a youtube transcript",
-            "summarise in 250 words or less and do not talk of the sponsors or anything unrelated to the main topic, also do not introduce what the summary is about.\n" +
-            transcript,
-            {summary: "summary of the transcript"}
+        const { summary } = await strict_output(
+            "You are an AI assistant skilled at summarizing video transcripts concisely and accurately.",
+            `Summarize the following transcript in 250 words or fewer. Focus only on the main topic and omit any sponsor mentions or irrelevant information. Do not provide an introduction; simply present the summary.
+
+${transcript}`,
+            { summary: "" }
         );
-
-        // any way to rate limit this?
-
-
 
         const questions = await getQuestionsFromTranscript(
             transcript,
