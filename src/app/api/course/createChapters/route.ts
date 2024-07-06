@@ -5,12 +5,12 @@ import { strict_output } from "@/lib/gpt";
 import { getUnsplashImage } from "@/lib/unsplash";
 import { prisma } from "@/lib/database";
 
-export async function POST(req: Request, res: Response) {
+export async function POST(req: Request) {
     try {
         const body = await req.json();
         const { title, units, educationLevel } = createChaptersSchema.parse(body);
 
-        type outputUnits = {
+        type OutputUnits = {
             title: string;
             chapters: {
                 youtube_search_query: string;
@@ -18,7 +18,7 @@ export async function POST(req: Request, res: Response) {
             }[];
         }[];
 
-        const output_units: outputUnits = await strict_output(
+        const outputUnits: OutputUnits = await strict_output(
             `You are an AI assistant tasked with curating course content for the education level "${educationLevel}". For the given course title "${title}", please create an array of units. Each unit should have a title and an array of chapters. For each chapter, provide a relevant YouTube search query and a chapter title that accurately represents the content of the educational video that would be found using that search query. The content should be tailored for the "${educationLevel}" education level.`,
             new Array(units.length).fill(
                 `It is your job to create a course about ${title} for the ${educationLevel} education level. The user has requested to create chapters for each of the units. Then, for each chapter, provide a detailed youtube search query that can be used to find an informative educational video for each chapter. Each query should give an educational informative course in youtube, tailored for the ${educationLevel} education level.`
@@ -38,41 +38,34 @@ export async function POST(req: Request, res: Response) {
             }
         );
 
-        const course_image = await getUnsplashImage(
-            imageSearchTerm.image_search_term
-        );
+        const courseImage = await getUnsplashImage(imageSearchTerm.image_search_term);
 
         const course = await prisma.course.create({
             data: {
                 name: title,
-                image: course_image,
+                image: courseImage,
             },
         });
 
-        for (const unit of output_units) {
-            const title = unit.title;
+        for (const unit of outputUnits) {
             const prismaUnit = await prisma.unit.create({
                 data: {
-                    name: title,
+                    name: unit.title,
                     courseId: course.id,
                 },
             });
-            await prisma.chapter.createMany({
-                data: unit.chapters.map((chapter) => {
-                    return {
-                        name: chapter.chapter_title,
-                        youtubeSearchQuery: chapter.youtube_search_query,
-                        unitId: prismaUnit.id,
-                    };
-                }),
-            });
+
+            const chapters = unit.chapters.map(chapter => ({
+                name: chapter.chapter_title,
+                youtubeSearchQuery: chapter.youtube_search_query,
+                unitId: prismaUnit.id,
+            }));
+
+            await prisma.chapter.createMany({ data: chapters });
         }
 
         return new NextResponse(
-            JSON.stringify({
-                success: true,
-                courseId: course.id,
-            }),
+            JSON.stringify({ success: true, courseId: course.id }),
             { status: 200 }
         );
     } catch (e) {
@@ -80,9 +73,7 @@ export async function POST(req: Request, res: Response) {
             return new NextResponse(JSON.stringify({ errors: e.errors }), { status: 400 });
         } else {
             console.error(e as Error);
-            return new NextResponse(JSON.stringify({
-                error: e instanceof Error ? e.message : "An error occurred",
-            }), { status: 500 });
+            return new NextResponse(JSON.stringify({ error: (e as Error).message || "An error occurred" }), { status: 500 });
         }
     }
 }
