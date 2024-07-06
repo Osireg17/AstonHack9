@@ -9,9 +9,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Account {
@@ -20,17 +20,17 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-  @@index([userId], name: "userId")
+  @@index([userId], map: "account_userId_idx")
 }
 
 model Session {
@@ -40,7 +40,7 @@ model Session {
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId], name: "userId")
+  @@index([userId], map: "session_userId_idx")
 }
 
 model User {
@@ -70,7 +70,7 @@ model Unit {
   course   Course    @relation(fields: [courseId], references: [id])
   chapters Chapter[]
 
-  @@index([courseId], name: "courseId")
+  @@index([courseId], map: "unit_courseId_idx")
 }
 
 model Chapter {
@@ -80,23 +80,21 @@ model Chapter {
   name               String
   youtubeSearchQuery String
   videoId            String?
-  summary            String?    @db.VarChar(3000)
+  summary            String?
   unit               Unit       @relation(fields: [unitId], references: [id])
   questions          Question[]
 
-  @@index([unitId], name: "unitId")
+  @@index([unitId], map: "chapter_unitId_idx")
 }
 
 model Question {
   id        String @id @default(cuid())
   chapterId String
 
-  question String  @db.VarChar(3000)
-  answer   String  @db.VarChar(3000)
-  options  String  @db.VarChar(3000)
+  question String
+  answer   String
+  options  String
   chapter  Chapter @relation(fields: [chapterId], references: [id])
 
-  @@index([chapterId], name: "chapterId")
+  @@index([chapterId], map: "question_chapterId_idx")
 }
-
-

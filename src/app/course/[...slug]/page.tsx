@@ -1,11 +1,11 @@
 import React from 'react';
-import {prisma} from "@/lib/database";
-import {redirect} from "next/navigation";
+import { prisma } from "@/lib/database";
+import { redirect } from "next/navigation";
 import CourseSideBar from "@/components/CourseSideBar";
 import MainVideoSummary from "@/components/MainVideoSummary";
 import QuizCards from "@/components/QuizCards";
 import Link from "next/link";
-import {ChevronLeft} from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
 };
 const CoursePage = async ({ params: { slug } }: Props) => {
     const [courseId, unitIdexParam, chapterIndexParam] = slug;
-    const course =  await prisma.course.findUnique({
+    const course = await prisma.course.findUnique({
         where: {
             id: courseId,
         },
@@ -32,7 +32,7 @@ const CoursePage = async ({ params: { slug } }: Props) => {
         },
     });
 
-    if(!course){
+    if (!course) {
         return redirect("/gallery");
     }
 
@@ -40,11 +40,11 @@ const CoursePage = async ({ params: { slug } }: Props) => {
     const chapterIndex = parseInt(chapterIndexParam);
 
     const unit = course.units[unitIndex];
-    if(!unit){
+    if (!unit) {
         return redirect('/gallery');
     }
     const chapter = unit.chapters[chapterIndex];
-    if(!chapter){
+    if (!chapter) {
         return redirect('/gallery');
     }
 
@@ -53,19 +53,19 @@ const CoursePage = async ({ params: { slug } }: Props) => {
 
     return (
         <div>
-        <CourseSideBar  course={course} currentChapterId={chapter.id}/>
+            <CourseSideBar course={course} currentChapterId={chapter.id} />
             <div>
                 <div className={"ml-[400px] px-8"}>
                     <div className="flex">
-                    <MainVideoSummary chapter={chapter} chapterIndex={chapterIndex} unit={unit} unitIndex={unitIndex}/>
-                        <QuizCards chapter={chapter}/>
-                </div>
-            <div className={"mt-16 border-t border-secondary-foreground/20"}/>
+                        <MainVideoSummary chapter={chapter} chapterIndex={chapterIndex} unit={unit} unitIndex={unitIndex} />
+                        <QuizCards chapter={chapter} />
+                    </div>
+                    <div className={"mt-16 border-t border-secondary-foreground/20"} />
                     <div className={"flex pb-8"}>
                         {prevChapter && (
                             <Link className={"flex mt-4 mr-auto w-fit"} href={`/course/${course.id}/${unitIndex}/${chapterIndex - 1}`}>
                                 <div className={"flex items-center"}>
-                                    <ChevronLeft className={"flex items-center"}/>
+                                    <ChevronLeft className={"flex items-center"} />
                                     <div className={"flex flex-col items-start"}>
                                         <span className={"text-sm text-secondary-foreground/60"}>Previous Chapter</span>
                                         <span className={"text-xl font-bold"}>{prevChapter.name}</span>
@@ -81,13 +81,13 @@ const CoursePage = async ({ params: { slug } }: Props) => {
                                         <span className={"text-sm text-secondary-foreground/60"}>Next Chapter</span>
                                         <span className={"text-xl font-bold"}>{nextChapter.name}</span>
                                     </div>
-                                    <ChevronLeft className={"flex items-center transform rotate-180"}/>
+                                    <ChevronLeft className={"flex items-center transform rotate-180"} />
                                 </div>
                             </Link>
                         )}
                     </div>
+                </div>
             </div>
-        </div>
         </div>
     );
 };
