@@ -81,7 +81,7 @@ const CoursePage = async ({ params: { slug } }: Props) => {
                                         <span className={"text-sm text-secondary-foreground/60"}>Next Chapter</span>
                                         <span className={"text-xl font-bold"}>{nextChapter.name}</span>
                                     </div>
-                                    <ChevronLeft className={"flex items-center transform rotate-180"} />
+                                    <ChevronLeft className={"flex items-center transform"} />
                                 </div>
                             </Link>
                         )}

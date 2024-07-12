@@ -15,6 +15,7 @@ import axios from "axios";
 import { useToast } from "./ui/use-toast";
 import { useRouter } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import SubscriptionAction from "@/components/SubscriptionAction";
 
 type Props = {};
 
@@ -195,6 +196,7 @@ const CreateCourseForm = (props: Props) => {
                     </Button>
                 </form>
             </Form>
+            <SubscriptionAction/>
         </div>
     );
 };

@@ -28,7 +28,7 @@ export default function Home() {
           <h1 className="text-5xl font-bold mb-4">Learn Smarter, Not Harder</h1>
           <p className="text-xl mb-8">AI-powered video summaries and quizzes to accelerate your learning</p>
           <Button asChild size="lg" className="bg-white text-blue-900 hover:bg-gray-200">
-            <Link href="/gallery">Get Started</Link>
+            <Link href="/">Get Started</Link>
           </Button>
         </div>
       </header>
@@ -63,7 +63,7 @@ export default function Home() {
           <h2 className="text-3xl font-semibold mb-4">Ready to Transform Your Learning?</h2>
           <p className="text-xl mb-8">Join thousands of students who are already benefiting from our platform.</p>
           <Button asChild size="lg" className="bg-white text-blue-900 hover:bg-gray-200">
-            <Link href="/gallery">Explore Courses <ArrowRight className="ml-2" /></Link>
+            <Link href="/">Explore Courses <ArrowRight className="ml-2" /></Link>
           </Button>
         </div>
       </section>

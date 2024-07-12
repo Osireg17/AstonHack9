@@ -10,7 +10,7 @@ import { Toaster } from "@/components/ui/toaster"
 const lexend = Lexend({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Watch and Learn",
+  title: "TopicTutor",
   description: "A Web Application to create your own courses to learn anything you want.",
 };
 
