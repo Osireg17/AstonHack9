@@ -4,9 +4,19 @@ import { ZodError } from "zod";
 import { strict_output } from "@/lib/gpt";
 import { getUnsplashImage } from "@/lib/unsplash";
 import { prisma } from "@/lib/database";
+import {getSession} from "next-auth/react";
+import {checkSubscription} from "@/lib/subscription";
 
 export async function POST(req: Request) {
     try {
+        const session = await getSession();
+        if(!session?.user) {
+            return new NextResponse(('Unauthorized'), { status: 401 })
+        }
+        const isPro = await checkSubscription();
+        if (session.user.credits <= 0 && !isPro) {
+            return new NextResponse(JSON.stringify({ error: "You do not have enough credits to create a course. Please upgrade to a pro account." }), { status: 402 });
+        }
         const body = await req.json();
         const { title, units, educationLevel } = createChaptersSchema.parse(body);
 
@@ -62,6 +72,13 @@ export async function POST(req: Request) {
             }));
 
             await prisma.chapter.createMany({ data: chapters });
+        }
+
+        if (!isPro) {
+            await prisma.user.update({
+                where: { id: session.user.id },
+                data: { credits: { decrement: 1 } }
+            });
         }
 
         return new NextResponse(

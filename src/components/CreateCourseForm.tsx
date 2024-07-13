@@ -17,13 +17,17 @@ import { useRouter } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import SubscriptionAction from "@/components/SubscriptionAction";
 
-type Props = {};
+type Props = {
+    isPro: boolean;
+};
+
 
 type Input = z.infer<typeof createChaptersSchema>;
 
-const CreateCourseForm = (props: Props) => {
+const CreateCourseForm = ({ isPro }: Props) => {
     const router = useRouter();
     const { toast } = useToast();
+    // @ts-ignore
     const { mutate: createChapters, isLoading } = useMutation({
         mutationFn: async ({ title, units, educationLevel }: Input) => {
             const response = await axios.post("/api/course/createChapters", {
@@ -196,7 +200,9 @@ const CreateCourseForm = (props: Props) => {
                     </Button>
                 </form>
             </Form>
-            <SubscriptionAction/>
+            {!isPro && (
+                <SubscriptionAction/>
+            )}
         </div>
     );
 };
