@@ -4,12 +4,13 @@ import { ZodError } from "zod";
 import { strict_output } from "@/lib/gpt";
 import { getUnsplashImage } from "@/lib/unsplash";
 import { prisma } from "@/lib/database";
-import {getSession} from "next-auth/react";
+
 import {checkSubscription} from "@/lib/subscription";
+import {getAuthSession} from "@/lib/auth";
 
 export async function POST(req: Request) {
     try {
-        const session = await getSession();
+        const session = await getAuthSession()
         if(!session?.user) {
             return new NextResponse(('Unauthorized'), { status: 401 })
         }
