@@ -9,7 +9,6 @@ type Props = {
 };
 
 const MainVideoSummary = ({
-                              unit,
                               unitIndex,
                               chapter,
                               chapterIndex,

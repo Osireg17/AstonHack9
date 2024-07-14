@@ -18,10 +18,12 @@ export type ChapterCardHandler = {
 };
 
 const ChapterCard = React.forwardRef<ChapterCardHandler, Props>(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ({ chapter, chapterIndex, setCompletedChapters, completedChapters }, ref) => {
         const { toast } = useToast();
         const [success, setSuccess] = React.useState<boolean | null>(null);
-        const { mutate: getChapterInfo, isLoading } = useMutation({
+
+        const { mutate: getChapterInfo} = useMutation({
             mutationFn: async () => {
                 const response = await axios.post("/api/chapter/getInfo", {
                     chapterId: chapter.id,

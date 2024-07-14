@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "./ui/form";
 import { z } from "zod";
 import { createChaptersSchema } from "@/validators/course";
@@ -16,18 +16,33 @@ import { useToast } from "./ui/use-toast";
 import { useRouter } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import SubscriptionAction from "@/components/SubscriptionAction";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Progress } from "@/components/ui/progress";
+
 
 type Props = {
     isPro: boolean;
 };
-
 
 type Input = z.infer<typeof createChaptersSchema>;
 
 const CreateCourseForm = ({ isPro }: Props) => {
     const router = useRouter();
     const { toast } = useToast();
-    // @ts-ignore
+    const [isDialogOpen, setDialogOpen] = useState(false);
+    const [isButtonEnabled, setButtonEnabled] = useState(false);
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     const { mutate: createChapters, isLoading } = useMutation({
         mutationFn: async ({ title, units, educationLevel }: Input) => {
             const response = await axios.post("/api/course/createChapters", {
@@ -37,7 +52,27 @@ const CreateCourseForm = ({ isPro }: Props) => {
             });
             return response.data;
         },
+        onSuccess: ({ courseId }) => {
+            toast({
+                title: "Success",
+                description: "Course created successfully",
+            });
+            setButtonEnabled(true);
+            setDialogOpen(false);
+            router.push(`/create/${courseId}`);
+        },
+        onError: (error) => {
+            console.error(error);
+            toast({
+                title: "Error",
+                description: "Something went wrong",
+                variant: "destructive",
+            });
+            setButtonEnabled(true);
+            setDialogOpen(false);
+        },
     });
+
     const form = useForm<Input>({
         resolver: zodResolver(createChaptersSchema),
         defaultValues: {
@@ -56,23 +91,9 @@ const CreateCourseForm = ({ isPro }: Props) => {
             });
             return;
         }
-        createChapters(data, {
-            onSuccess: ({ courseId }) => {
-                toast({
-                    title: "Success",
-                    description: "Course created successfully",
-                });
-                router.push(`/create/${courseId}`);
-            },
-            onError: (error) => {
-                console.error(error);
-                toast({
-                    title: "Error",
-                    description: "Something went wrong",
-                    variant: "destructive",
-                });
-            },
-        });
+        setDialogOpen(true);
+        setButtonEnabled(false);
+        createChapters(data);
     }
 
     form.watch();
@@ -203,8 +224,33 @@ const CreateCourseForm = ({ isPro }: Props) => {
             {!isPro && (
                 <SubscriptionAction/>
             )}
+
+            <AlertDialog open={isDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Creating Course...</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Please wait while we create your course.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <Progress value={isLoading ? 50 : 100} />
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setDialogOpen(false)}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            disabled={!isButtonEnabled}
+                            onClick={() => {
+                                setDialogOpen(false);
+                                setButtonEnabled(false);
+                            }}
+                        >
+                            Done
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 };
 
 export default CreateCourseForm;
+
